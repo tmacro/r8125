@@ -45,7 +45,10 @@ ifeq ($(BASEDIR),)
 BASEDIR := /lib/modules/$(shell uname -r)
 endif
 
+ifeq ($(KERNELDIR),)
 KERNELDIR ?= $(BASEDIR)/build
+endif
+
 PWD :=$(shell pwd)
 DRIVERDIR := $(shell find $(BASEDIR)/kernel/drivers/net/ethernet -name realtek -type d)
 ifeq ($(DRIVERDIR),)
