@@ -41,6 +41,49 @@ ENABLE_EEE = y
 ENABLE_S0_MAGIC_PACKET = n
 ENABLE_TX_NO_CLOSE = y
 
+ifneq ($(KERNELRELEASE),)
+	obj-m := r8125.o
+	r8125-objs := r8125_n.o rtl_eeprom.o rtltool.o
+	ifeq ($(CONFIG_SOC_LAN), y)
+		EXTRA_CFLAGS += -DCONFIG_SOC_LAN
+	endif
+	ifeq ($(ENABLE_REALWOW_SUPPORT), y)
+	    r8125-objs += r8125_realwow.o
+		EXTRA_CFLAGS += -DENABLE_REALWOW_SUPPORT
+	endif
+	ifeq ($(ENABLE_DASH_SUPPORT), y)
+	    r8125-objs += r8125_dash.o
+		EXTRA_CFLAGS += -DENABLE_DASH_SUPPORT
+	endif
+	ifeq ($(ENABLE_DASH_PRINTER_SUPPORT), y)
+	    r8125-objs += r8125_dash.o
+		EXTRA_CFLAGS += -DENABLE_DASH_SUPPORT -DENABLE_DASH_PRINTER_SUPPORT
+	endif
+	EXTRA_CFLAGS += -DCONFIG_R8125_NAPI
+	EXTRA_CFLAGS += -DCONFIG_R8125_VLAN
+	ifeq ($(CONFIG_DOWN_SPEED_100), y)
+		EXTRA_CFLAGS += -DCONFIG_DOWN_SPEED_100
+	endif
+	ifeq ($(CONFIG_ASPM), y)
+		EXTRA_CFLAGS += -DCONFIG_ASPM
+	endif
+	ifeq ($(ENABLE_S5WOL), y)
+		EXTRA_CFLAGS += -DENABLE_S5WOL
+	endif
+	ifeq ($(ENABLE_S5_KEEP_CURR_MAC), y)
+		EXTRA_CFLAGS += -DENABLE_S5_KEEP_CURR_MAC
+	endif
+	ifeq ($(ENABLE_EEE), y)
+		EXTRA_CFLAGS += -DENABLE_EEE
+	endif
+	ifeq ($(ENABLE_S0_MAGIC_PACKET), y)
+		EXTRA_CFLAGS += -DENABLE_S0_MAGIC_PACKET
+	endif
+	ifeq ($(ENABLE_TX_NO_CLOSE), y)
+		EXTRA_CFLAGS += -DENABLE_TX_NO_CLOSE
+	endif
+else
+
 ifeq ($(BASEDIR),)
 BASEDIR := /lib/modules/$(shell uname -r)
 endif
@@ -88,3 +131,5 @@ clean:
 .PHONY:install
 install:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) INSTALL_MOD_DIR=$(RTKDIR) modules_install
+
+endif
